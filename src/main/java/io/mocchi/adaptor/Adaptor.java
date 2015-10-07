@@ -1,5 +1,7 @@
 package io.mocchi.adaptor;
 
+import io.mocchi.RhoUtil;
+
 import java.util.ArrayList;
 
 @SuppressWarnings("rawtypes")
@@ -8,17 +10,7 @@ public abstract class Adaptor {
 	/** adaptors list */
 	final private static ArrayList<Class> adaptors = new ArrayList<>();
 	/** file */
-	private String path;
-
-	private static String getExt(String path) {
-		if (path == null)
-			return null;
-		int point = path.lastIndexOf(".");
-		if (point != -1) {
-			return path.substring(point + 1);
-		}
-		return null;
-	}
+	protected String path;
 
 	/**
 	 * 
@@ -49,7 +41,7 @@ public abstract class Adaptor {
 			NoSuchFieldException, SecurityException {
 		Class<Adaptor> adaptorClass = null;
 		Adaptor adaptor = null;
-		String fileExt = Adaptor.getExt(path);
+		String fileExt = RhoUtil.getExt(path);
 		// search adaptor
 		for (Class clazz : Adaptor.adaptors) {
 			java.lang.reflect.Field field = clazz.getDeclaredField("EXTS");
@@ -68,7 +60,18 @@ public abstract class Adaptor {
 		}
 		return adaptor;
 	}
-
+	
+	public abstract java.awt.Image page(int pageNumber);
+	public abstract void openBook();
+	public abstract void closeBook();
+	public abstract boolean ready();
+	public abstract boolean canRead();
+	public abstract int getMaxPage();
+	
+	public void init(){
+		openBook();
+	}
+	
 	public String getPath() {
 		return path;
 	}
