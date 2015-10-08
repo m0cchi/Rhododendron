@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 @SuppressWarnings("rawtypes")
 public abstract class Adaptor {
-	protected static String[] EXTS = new String[0];
+	final protected static ArrayList<String> EXTS = new ArrayList<>();
 	/** adaptors list */
 	final private static ArrayList<Class> adaptors = new ArrayList<>();
 	/** file */
@@ -45,7 +45,7 @@ public abstract class Adaptor {
 		// search adaptor
 		for (Class clazz : Adaptor.adaptors) {
 			java.lang.reflect.Field field = clazz.getDeclaredField("EXTS");
-			String[] exts = (String[]) field.get(null);
+			ArrayList<String> exts = (ArrayList<String>) field.get(null);
 			for (String ext : exts) {
 				if (ext.equalsIgnoreCase(fileExt)) {
 					adaptorClass = clazz;
@@ -60,18 +60,23 @@ public abstract class Adaptor {
 		}
 		return adaptor;
 	}
-	
-	public abstract java.awt.Image page(int pageNumber);
+
+	public abstract OptimizedImage page(int pageNumber);
+
 	public abstract void openBook();
+
 	public abstract void closeBook();
+
 	public abstract boolean ready();
+
 	public abstract boolean canRead();
+
 	public abstract int getMaxPage();
-	
-	public void init(){
+
+	public void init() {
 		openBook();
 	}
-	
+
 	public String getPath() {
 		return path;
 	}
