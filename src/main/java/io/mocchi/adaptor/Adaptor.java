@@ -11,6 +11,7 @@ public abstract class Adaptor {
 	final private static ArrayList<Class> adaptors = new ArrayList<>();
 	/** file */
 	protected String path;
+	protected OptimizedImage[] images;
 
 	/**
 	 * 
@@ -84,4 +85,9 @@ public abstract class Adaptor {
 	public void setPath(String path) {
 		this.path = path;
 	}
+
+	public OptimizedImage[] getImages() {
+		return images;
+	}
+	
 }

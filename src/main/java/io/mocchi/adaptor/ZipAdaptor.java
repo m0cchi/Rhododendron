@@ -21,7 +21,6 @@ public class ZipAdaptor extends Adaptor {
 		}
 	};
 	private int size;
-	private OptimizedImage[] images;
 	static {
 		Adaptor.register(ZipAdaptor.class);
 	}
@@ -56,7 +55,6 @@ public class ZipAdaptor extends Adaptor {
 										ImageIO.read(is), entry.getName());
 								images.add(image);
 								is.close();
-								Optimizer.add(image);
 							} catch (IOException e) {
 								e.printStackTrace();
 							}

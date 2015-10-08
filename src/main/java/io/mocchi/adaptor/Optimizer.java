@@ -3,11 +3,12 @@ package io.mocchi.adaptor;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class Optimizer extends Thread {
-	private static final List<OptimizedImage> IMAGES = Collections
+	private List<OptimizedImage> images = Collections
 			.synchronizedList(new ArrayList<>());
 	/** window */
 	private int width, height;
@@ -16,9 +17,15 @@ public class Optimizer extends Thread {
 		this.width = width;
 		this.height = height;
 	}
+	
+	public void add(OptimizedImage image){
+		images.add(image);
+	}
 
-	public static void add(OptimizedImage image) {
-		IMAGES.add(image);
+	public void add(OptimizedImage[] images) {
+		for(OptimizedImage image : images){
+			add(image);
+		}
 	}
 
 	public void optimize(OptimizedImage image) {
@@ -45,10 +52,10 @@ public class Optimizer extends Thread {
 	}
 
 	public void optimize() {
-		for (OptimizedImage optimizedImage : IMAGES) {
+		for (OptimizedImage optimizedImage : this.images) {
 			optimize(optimizedImage);
 		}
-		IMAGES.clear();
+		this.images.clear();
 	}
 
 	@Override

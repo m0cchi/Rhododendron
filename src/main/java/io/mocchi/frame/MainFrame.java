@@ -1,6 +1,7 @@
 package io.mocchi.frame;
 
 import io.mocchi.Settings;
+import io.mocchi.adaptor.Adaptor;
 import io.mocchi.adaptor.Operation;
 import io.mocchi.adaptor.OptimizedImage;
 import io.mocchi.adaptor.Optimizer;
@@ -41,6 +42,7 @@ public class MainFrame extends JFrame {
 
 	public void openBook(String path) {
 		ImagePanel panel = new ImagePanel();
+		Adaptor adaptor;
 		Operation.Action action = new Operation.Action() {
 			@Override
 			protected void setImage(OptimizedImage image) {
@@ -81,16 +83,26 @@ public class MainFrame extends JFrame {
 			}
 		};
 		try {
-			Operation operation = new Operation(path, action);
+			adaptor = Adaptor.createAdaptor(path);
+			Operation operation = new Operation(adaptor, action);
 			ImageViewKeyListener listener = new ImageViewKeyListener(operation);
 			addKeyListener(listener);
 			setContentPane(panel);
 			Optimizer optimizer = new Optimizer(getWidth(), getHeight());
+			optimizer.add(adaptor.getImages());
 			optimizer.start();
 			// first page
 
-		} catch (InstantiationException | IllegalAccessException
-				| NoSuchFieldException | SecurityException e) {
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
