@@ -28,13 +28,17 @@ public class ImagePanel extends JPanel {
 		this.img = img;
 	}
 
+	public void repaint() {
+		super.repaint();
+		revalidate();
+	}
+
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setColor(Color.BLACK);
 		g2.fillRect(getX(), getY(), getWidth(), getWidth());
-
 		if (img == null) {
 			return;
 		}

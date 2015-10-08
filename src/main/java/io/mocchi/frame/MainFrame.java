@@ -3,6 +3,7 @@ package io.mocchi.frame;
 import io.mocchi.Settings;
 import io.mocchi.adaptor.Operation;
 import io.mocchi.adaptor.OptimizedImage;
+import io.mocchi.adaptor.Optimizer;
 import io.mocchi.comp.ImagePanel;
 import io.mocchi.comp.ImageViewKeyListener;
 
@@ -11,6 +12,7 @@ import java.awt.Rectangle;
 import java.awt.event.KeyListener;
 
 import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
 
 public class MainFrame extends JFrame {
 	private static final long serialVersionUID = 7584062209990894301L;
@@ -42,9 +44,14 @@ public class MainFrame extends JFrame {
 		Operation.Action action = new Operation.Action() {
 			@Override
 			protected void setImage(OptimizedImage image) {
-				panel.setImage(image.getImage());
-				panel.repaint();
-				setTitle(Settings.APP_NAME + " - " + image.getPath());
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						panel.setImage(image.getImage());
+						panel.repaint();
+						setTitle(Settings.APP_NAME + " - " + image.getPath());
+					}
+				});
 			}
 
 			@Override
@@ -76,8 +83,12 @@ public class MainFrame extends JFrame {
 		try {
 			Operation operation = new Operation(path, action);
 			ImageViewKeyListener listener = new ImageViewKeyListener(operation);
-			setContentPane(panel);
 			addKeyListener(listener);
+			setContentPane(panel);
+			Optimizer optimizer = new Optimizer(getWidth(), getHeight());
+			optimizer.start();
+			// first page
+
 		} catch (InstantiationException | IllegalAccessException
 				| NoSuchFieldException | SecurityException e) {
 			// TODO Auto-generated catch block

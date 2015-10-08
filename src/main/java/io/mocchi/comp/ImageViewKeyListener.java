@@ -21,17 +21,14 @@ public class ImageViewKeyListener implements KeyListener {
 	public void keyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_LEFT:
-			System.out.println("LEFT");
 			operation.next();
 			break;
 		case KeyEvent.VK_RIGHT:
-			System.out.println("RIGHT");
 			operation.prev();
 			break;
 		default:
 			break;
 		}
-		System.out.println(e);
 	}
 
 	@Override

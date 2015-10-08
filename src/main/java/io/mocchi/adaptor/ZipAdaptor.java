@@ -52,9 +52,11 @@ public class ZipAdaptor extends Adaptor {
 							InputStream is = null;
 							try {
 								is = zipFile.getInputStream(entry);
-								images.add(new OptimizedImage(ImageIO.read(is),
-										entry.getName()));
+								OptimizedImage image = new OptimizedImage(
+										ImageIO.read(is), entry.getName());
+								images.add(image);
 								is.close();
+								Optimizer.add(image);
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
