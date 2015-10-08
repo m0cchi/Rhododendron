@@ -12,31 +12,30 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 import javax.swing.JPanel;
 
-
 public class ImagePanel extends JPanel {
 	private static final long serialVersionUID = 3543262776343265082L;
 	private BufferedImage img;
-	
+
 	public void setImage(String path) throws IOException {
 		setImage(new FileInputStream(new File(path)));
 	}
-	
-	public void setImage(InputStream is) throws IOException{
+
+	public void setImage(InputStream is) throws IOException {
 		setImage(ImageIO.read(is));
 	}
-	
-	public void setImage(BufferedImage img){
+
+	public void setImage(BufferedImage img) {
 		this.img = img;
 	}
-	
+
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setColor(Color.BLACK);
 		g2.fillRect(getX(), getY(), getWidth(), getWidth());
-		
-		if (img == null){
+
+		if (img == null) {
 			return;
 		}
 		int w, h, x, y, ww, wh;
@@ -46,16 +45,9 @@ public class ImagePanel extends JPanel {
 		w = img.getWidth();
 		h = img.getHeight();
 		// opt
-		if (w > h) {
-			fraito = (double) ww / w;
-			if (h * fraito > wh) {
-				sraito = (double) wh / (h * fraito);
-			}
-		} else {
-			fraito = (double) wh / h;
-			if (w * fraito > ww) {
-				sraito = (double) ww / (w * fraito);
-			}
+		fraito = (double) ww / w;
+		if (h * fraito > wh) {
+			sraito = (double) wh / (h * fraito);
 		}
 
 		w = (int) (w * fraito * sraito);
