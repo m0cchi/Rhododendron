@@ -38,7 +38,7 @@ public class ImagePanel extends JPanel {
 		super.paint(g);
 		Graphics2D g2 = (Graphics2D) g;
 		g2.setColor(Color.BLACK);
-		g2.fillRect(getX(), getY(), getWidth(), getWidth());
+		g2.fillRect(getX(), getY(), getWidth(), getHeight());
 		if (img == null) {
 			return;
 		}
