@@ -19,7 +19,7 @@ public class PathSorter implements Comparator<OptimizedImage> {
 
 	@Override
 	public int compare(OptimizedImage o1, OptimizedImage o2) {
-		return compare(o1.getPath(), o2.getPath());
+		return o1 == null ? -1 : o2 == null ? 1 : compare(o1.getPath(),
+				o2.getPath());
 	}
-
 }

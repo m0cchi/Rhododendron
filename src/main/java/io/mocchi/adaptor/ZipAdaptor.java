@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -21,6 +22,7 @@ public class ZipAdaptor extends Adaptor {
 		}
 	};
 	private int size;
+
 	static {
 		Adaptor.register(ZipAdaptor.class);
 	}
@@ -30,8 +32,7 @@ public class ZipAdaptor extends Adaptor {
 		return images[pageNumber];
 	}
 
-	@Override
-	public void openBook() {
+	public void openBook(int count) {
 		File file = new File(this.path);
 		try {
 			ZipFile zipFile = new ZipFile(file);
@@ -43,7 +44,8 @@ public class ZipAdaptor extends Adaptor {
 				ZipEntry entry = e.nextElement();
 				if (entry.isDirectory())
 					continue;
-				if (RhoUtil.isSupportedFormats(entry.getName())) {
+				if (RhoUtil.isSupportedFormats(entry.getName())
+						&& !RhoUtil.isHiddenPath(entry.getName())) {
 					size++;
 					Thread thread = new Thread() {
 						@Override
@@ -69,7 +71,22 @@ public class ZipAdaptor extends Adaptor {
 			}
 			zipFile.close();
 			images.sort(new PathSorter());
-			this.images = images.toArray(new OptimizedImage[0]);
+			int len = images.size();
+			images.removeAll(Collections.singleton(null));
+			if (len == images.size()) {
+				this.images = images.toArray(new OptimizedImage[0]);
+				images.clear();
+				threads.clear();
+				if (this.optimizer != null) {
+					optimizer.add(this.images);
+					optimizer.start();
+				}
+			} else if (count < 5) {
+				images.clear();
+				threads.clear();
+				openBook(count + 1);
+			} else {
+			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -78,6 +95,11 @@ public class ZipAdaptor extends Adaptor {
 			e.printStackTrace();
 		}
 
+	}
+
+	@Override
+	public void openBook() {
+		openBook(0);
 	}
 
 	@Override

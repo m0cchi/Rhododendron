@@ -84,14 +84,12 @@ public class MainFrame extends JFrame {
 		};
 		try {
 			adaptor = Adaptor.createAdaptor(path);
+			Optimizer optimizer = new Optimizer(getWidth(), getHeight());
+			adaptor.setOptimizer(optimizer);
 			Operation operation = new Operation(adaptor, action);
 			ImageViewKeyListener listener = new ImageViewKeyListener(operation);
 			addKeyListener(listener);
 			setContentPane(panel);
-			Optimizer optimizer = new Optimizer(getWidth(), getHeight());
-			optimizer.add(adaptor.getImages());
-			optimizer.start();
-			// first page
 
 		} catch (SecurityException e) {
 			// TODO Auto-generated catch block

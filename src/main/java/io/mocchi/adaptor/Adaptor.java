@@ -12,6 +12,7 @@ public abstract class Adaptor {
 	/** file */
 	protected String path;
 	protected OptimizedImage[] images;
+	protected Optimizer optimizer;
 
 	/**
 	 * 
@@ -89,5 +90,15 @@ public abstract class Adaptor {
 	public OptimizedImage[] getImages() {
 		return images;
 	}
+
+	public Optimizer getOptimizer() {
+		return optimizer;
+	}
+
+	public void setOptimizer(Optimizer optimizer) {
+		this.optimizer = optimizer;
+	}
+	
+	
 	
 }
