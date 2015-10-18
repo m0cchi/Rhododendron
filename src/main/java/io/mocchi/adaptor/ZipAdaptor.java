@@ -2,12 +2,16 @@ package io.mocchi.adaptor;
 
 import io.mocchi.PathSorter;
 import io.mocchi.RhoUtil;
+import io.mocchi.Settings;
+import io.mocchi.sort.ZipEntrySorter;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -22,24 +26,60 @@ public class ZipAdaptor extends Adaptor {
 		}
 	};
 	private int size;
+	private ZipEntry[] entries;
+	private ZipFile archive;
 
 	static {
 		Adaptor.register(ZipAdaptor.class);
 	}
 
+	protected OptimizedImage resad(int index) {
+		if (images[index] == null) {
+
+		}
+
+		return images[index];
+	}
+
+	private void removeCache(int index) {
+		if (index > 0 && index < this.images.length) {
+			images[index] = null;
+		}
+	}
+
+	@Override
+	protected OptimizedImage read(int index) {
+		removeCache(index - Settings.cacheSize);
+		removeCache(index + Settings.cacheSize);
+		if (images[index] == null) {
+			InputStream is;
+			try {
+				is = archive.getInputStream(this.entries[index]);
+				BufferedInputStream bis = new BufferedInputStream(is);
+				images[index] = new OptimizedImage(ImageIO.read(bis),
+						this.entries[index].getName());
+				if (this.optimizer != null) {
+					this.optimizer.optimize(images[index]);
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return images[index];
+	}
+
 	@Override
 	public OptimizedImage page(int pageNumber) {
-		return images[pageNumber];
+		return read(pageNumber);
 	}
 
 	public void openBook(int count) {
 		File file = new File(this.path);
 		try {
-			ZipFile zipFile = new ZipFile(file);
-			ArrayList<OptimizedImage> images = new ArrayList<>();
-			ArrayList<Thread> threads = new ArrayList<>();
+			archive = new ZipFile(file);
+			ArrayList<ZipEntry> entries = new ArrayList<>();
 			size = 0;
-			for (Enumeration<? extends ZipEntry> e = zipFile.entries(); e
+			for (Enumeration<? extends ZipEntry> e = archive.entries(); e
 					.hasMoreElements();) {
 				ZipEntry entry = e.nextElement();
 				if (entry.isDirectory())
@@ -47,51 +87,13 @@ public class ZipAdaptor extends Adaptor {
 				if (RhoUtil.isSupportedFormats(entry.getName())
 						&& !RhoUtil.isHiddenPath(entry.getName())) {
 					size++;
-					Thread thread = new Thread() {
-						@Override
-						public void run() {
-							InputStream is = null;
-							try {
-								is = zipFile.getInputStream(entry);
-								OptimizedImage image = new OptimizedImage(
-										ImageIO.read(is), entry.getName());
-								images.add(image);
-								is.close();
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}
-					};
-					thread.start();
-					threads.add(thread);
+					entries.add(entry);
 				}
 			}
-			for (Thread thread : threads) {
-				thread.join();
-			}
-			zipFile.close();
-			images.sort(new PathSorter());
-			int len = images.size();
-			images.removeAll(Collections.singleton(null));
-			if (len == images.size()) {
-				this.images = images.toArray(new OptimizedImage[0]);
-				images.clear();
-				threads.clear();
-				if (this.optimizer != null) {
-					optimizer.add(this.images);
-					optimizer.start();
-				}
-			} else if (count < 5) {
-				images.clear();
-				threads.clear();
-				openBook(count + 1);
-			} else {
-			}
+			Collections.sort(entries, new ZipEntrySorter());
+			this.entries = entries.toArray(new ZipEntry[0]);
+			this.images = new OptimizedImage[this.entries.length];
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -124,6 +126,17 @@ public class ZipAdaptor extends Adaptor {
 	public void closeBook() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void finalize() {
+		try {
+			if (archive != null) {
+				archive.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

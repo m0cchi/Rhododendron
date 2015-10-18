@@ -62,4 +62,11 @@ public class Optimizer extends Thread {
 	public void run() {
 		optimize();
 	}
+
+	@Override
+	public String toString() {
+		return "Optimizer [width=" + width + ", height="
+				+ height + "]";
+	}
+	
 }

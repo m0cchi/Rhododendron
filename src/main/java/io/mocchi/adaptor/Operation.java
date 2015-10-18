@@ -43,6 +43,10 @@ public class Operation {
 		action.setImage(image);
 	}
 
+	public void finalize() {
+		adaptor.finalize();
+	}
+
 	/**
 	 * callback
 	 */

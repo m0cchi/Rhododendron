@@ -62,7 +62,14 @@ public abstract class Adaptor {
 		}
 		return adaptor;
 	}
+	
+	protected abstract OptimizedImage read(int pageNumber);
 
+	/**
+	 * optimized reader
+	 * @param pageNumber
+	 * @return
+	 */
 	public abstract OptimizedImage page(int pageNumber);
 
 	public abstract void openBook();
@@ -74,6 +81,8 @@ public abstract class Adaptor {
 	public abstract boolean canRead();
 
 	public abstract int getMaxPage();
+	
+	public abstract void finalize();
 
 	public void init() {
 		openBook();
