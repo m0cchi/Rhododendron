@@ -35,10 +35,7 @@ public class Optimizer extends Thread {
 		w = origin.getWidth();
 		h = origin.getHeight();
 		// opt
-		fraito = (double) width / w;
-		if (h * fraito > height) {
-			sraito = (double) height / (h * fraito);
-		}
+		fraito = (double) height / h;
 		w = (int) (w * fraito * sraito);
 		h = (int) (h * fraito * sraito);
 
