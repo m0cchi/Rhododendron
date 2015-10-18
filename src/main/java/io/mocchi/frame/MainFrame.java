@@ -15,6 +15,8 @@ import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -81,6 +83,7 @@ public class MainFrame extends JFrame {
 	public void openBook(String path) {
 		ImagePanel panel = new ImagePanel();
 		Adaptor adaptor;
+		Operation operation = null;
 		Operation.Action action = new Operation.Action() {
 			@Override
 			protected void setImage(OptimizedImage image) {
@@ -124,7 +127,7 @@ public class MainFrame extends JFrame {
 			adaptor = Adaptor.createAdaptor(path);
 			Optimizer optimizer = new Optimizer(getWidth(), getHeight());
 			adaptor.setOptimizer(optimizer);
-			Operation operation = new Operation(adaptor, action);
+			operation = new Operation(adaptor, action);
 			ImageViewKeyListener listener = new ImageViewKeyListener(operation);
 			addKeyListener(listener);
 			this.defaultContent.add(panel);
@@ -142,5 +145,13 @@ public class MainFrame extends JFrame {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		final Operation foperation = operation;
+		addWindowListener(new WindowAdapter(){
+			public void windowClosing(WindowEvent e) {
+				foperation.finalize();
+				System.exit(0);
+			}
+		});
 	}
 }
